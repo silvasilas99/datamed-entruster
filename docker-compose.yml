@@ -1,0 +1,29 @@
+services:
+  api:
+    build: .
+    ports:
+      - "3333:3333"
+    volumes:
+      - .:/app
+      - api_node_modules:/app/node_modules
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+      - HOST=0.0.0.0
+      - FABRIC_ENDPOINT=fabric:8080
+      - MICROFAB_URL=http://fabric:8080
+      - FABRIC_CHANNEL=fhirchannel
+      - FABRIC_CHAINCODE=fhirchaincode
+    depends_on:
+      - fabric
+
+  fabric:
+    image: ibmcom/ibp-microfab:latest
+    environment:
+      - MICROFAB_CONFIG={"endorsing_organizations":[{"name":"Org1"}],"channels":[{"name":"fhirchannel","endorsing_organizations":["Org1"]}],"capability_level":"V2_0"}
+    ports:
+      - "8080:8080"
+
+volumes:
+  api_node_modules:
