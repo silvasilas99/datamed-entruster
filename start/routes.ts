@@ -37,5 +37,14 @@ router
     router.post('/metadata', [controllers.Metadata, 'store'])
     router.get('/metadata', [controllers.Metadata, 'index'])
     router.get('/metadata/:id', [controllers.Metadata, 'show'])
+
+    router.resource('institutions', controllers.Institutions).apiOnly()
+
+    router.resource('patients', controllers.Patients).only(['index', 'store', 'show', 'destroy'])
+    router.post('/patients/:id/identifiers', [controllers.Patients, 'addIdentifiers'])
+    router.delete('/patients/:id/identifiers/:identifierId', [
+      controllers.Patients,
+      'removeIdentifier',
+    ])
   })
   .prefix('/api/v1')

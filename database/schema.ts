@@ -32,6 +32,74 @@ export class AuthAccessTokenSchema extends BaseModel {
   declare updatedAt: DateTime | null
 }
 
+export class FhirResourceMetadatumSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'indexedAt', 'institutionId', 'patientId', 'resourceId', 'resourceType', 'status', 'updatedAt', 'versionId'] as const
+  $columns = FhirResourceMetadatumSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: string
+  @column.dateTime()
+  declare indexedAt: DateTime | null
+  @column()
+  declare institutionId: string | null
+  @column()
+  declare patientId: string | null
+  @column()
+  declare resourceId: string
+  @column()
+  declare resourceType: string
+  @column()
+  declare status: string | null
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare versionId: string | null
+}
+
+export class InstitutionSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'name', 'updatedAt'] as const
+  $columns = InstitutionSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare name: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
+export class PatientIdentifierSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'institutionId', 'patientId', 'system', 'updatedAt', 'value'] as const
+  $columns = PatientIdentifierSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare institutionId: string | null
+  @column()
+  declare patientId: string | null
+  @column()
+  declare system: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare value: string
+}
+
+export class PatientSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'updatedAt'] as const
+  $columns = PatientSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
 export class UserSchema extends BaseModel {
   static $columns = ['createdAt', 'email', 'fullName', 'id', 'password', 'updatedAt'] as const
   $columns = UserSchema.$columns

@@ -1,5 +1,7 @@
 import { createPrivateKey } from 'node:crypto'
+// @ts-ignore
 import * as grpc from '@grpc/grpc-js'
+// @ts-ignore
 import { connect, hash, signers, type Gateway, type Network } from '@hyperledger/fabric-gateway'
 
 type MicrofabComponent = {

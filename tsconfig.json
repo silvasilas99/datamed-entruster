@@ -3,6 +3,20 @@
   "compilerOptions": {
     "rootDir": "./",
     "jsx": "react",
-    "outDir": "./build"
-  }
+    "outDir": "./build",
+    "paths": {
+      "#models/*": ["./app/models/*"],
+      "#models/healthcare/*": ["./app/models/healthcare/*"],
+      "#services/*": ["./app/services/*"],
+      "#services/healthcare/*": ["./app/services/healthcare/*"],
+      "#types/*": ["./app/types/*"],
+      "#types/healthcare/*": ["./app/types/healthcare/*"]
+    }
+  },
+  "exclude": [
+    "fabric-samples",
+    "chaincode",
+    "node_modules",
+    "build"
+  ]
 }

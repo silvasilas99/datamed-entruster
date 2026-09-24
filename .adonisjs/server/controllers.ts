@@ -5,7 +5,9 @@
 
 export const controllers = {
   AccessTokens: () => import('#controllers/access_tokens_controller'),
+  Institutions: () => import('#controllers/institutions_controller'),
   Metadata: () => import('#controllers/metadata_controller'),
   NewAccount: () => import('#controllers/new_account_controller'),
+  Patients: () => import('#controllers/patients_controller'),
   Profile: () => import('#controllers/profile_controller'),
 }
