@@ -6,24 +6,89 @@ services:
     volumes:
       - .:/app
       - api_node_modules:/app/node_modules
+      - ./fabric-samples/test-network/organizations:/fabric/organizations:ro
     env_file:
       - .env
     environment:
       - NODE_ENV=development
       - HOST=0.0.0.0
-      - FABRIC_ENDPOINT=fabric:8080
-      - MICROFAB_URL=http://fabric:8080
-      - FABRIC_CHANNEL=fhirchannel
-      - FABRIC_CHAINCODE=fhirchaincode
+      - FABRIC_MODE=test-network
+      - FABRIC_ENDPOINT=host.docker.internal:7051
+      - FABRIC_PEER_HOST_OVERRIDE=peer0.org1.example.com
+      - FABRIC_MSP_ID=Org1MSP
+      - FABRIC_CHANNEL=mychannel
+      - FABRIC_CHAINCODE=fhir_chaincode
+      - FABRIC_CRYPTO_PATH=/fabric/organizations
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_OPTIONAL=true
+      - COUCHDB_URL=http://couchdb:5984
+      - COUCHDB_USERNAME=admin
+      - COUCHDB_PASSWORD=password
+      - COUCHDB_METADATA_DB=fhir_metadata
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
-      - fabric
+      fabric-bootstrap:
+        condition: service_completed_successfully
+      elasticsearch:
+        condition: service_started
+      redis:
+        condition: service_started
+      couchdb:
+        condition: service_started
 
-  fabric:
-    image: ibmcom/ibp-microfab:latest
+  fabric-bootstrap:
+    build:
+      context: ./docker/fabric-bootstrap
+    network_mode: host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Same host path inside the container so network.sh volume mounts resolve correctly
+      - ${PWD}:${PWD}
+    working_dir: ${PWD}
     environment:
-      - MICROFAB_CONFIG={"endorsing_organizations":[{"name":"Org1"}],"channels":[{"name":"fhirchannel","endorsing_organizations":["Org1"]}],"capability_level":"V2_0"}
+      - COMPOSE_PROJECT_DIR=${PWD}
+      - FABRIC_CHANNEL=mychannel
+      - FABRIC_CHAINCODE=fhir_chaincode
+      - FABRIC_CC_VERSION=1.0
+    restart: "no"
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
     ports:
-      - "8080:8080"
+      - "9200:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: datamed-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+
+  couchdb:
+    image: couchdb:3.3
+    container_name: datamed-couchdb
+    environment:
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=password
+    ports:
+      - "5984:5984"
+    volumes:
+      - couchdb_data:/opt/couchdb/data
 
 volumes:
   api_node_modules:
+  es_data:
+  redis_data:
+  couchdb_data:

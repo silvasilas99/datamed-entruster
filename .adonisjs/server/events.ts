@@ -3,4 +3,12 @@
  * DO NOT EDIT manually
  */
 
-export const events = {}
+import ClinicalAccessEvent from '#events/clinical_access_event'
+import FhirMetadataDeleted from '#events/fhir_metadata_deleted'
+import FhirMetadataSaved from '#events/fhir_metadata_saved'
+
+export const events = {
+  ClinicalAccessEvent: ClinicalAccessEvent,
+  FhirMetadataDeleted: FhirMetadataDeleted,
+  FhirMetadataSaved: FhirMetadataSaved,
+}

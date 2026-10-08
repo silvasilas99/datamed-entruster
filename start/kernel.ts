@@ -46,4 +46,5 @@ router.use([
  */
 export const middleware = router.named({
   auth: () => import('#middleware/auth_middleware'),
+  clinicalUrgency: () => import('#middleware/clinical_urgency_middleware'),
 })

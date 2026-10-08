@@ -3,4 +3,7 @@
  * DO NOT EDIT manually
  */
 
-export const listeners = {}
+export const listeners = {
+  ClinicalAuditLogger: () => import('#listeners/clinical_audit_logger'),
+  FhirMetadataIndexer: () => import('#listeners/fhir_metadata_indexer'),
+}

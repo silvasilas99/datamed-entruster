@@ -1,0 +1,8 @@
+{
+    "index": {
+        "fields": ["docType", "patientId", "dataControllerMspId", "status"]
+    },
+    "ddoc": "consentByPatientControllerStatusDoc",
+    "name": "consentByPatientControllerStatus",
+    "type": "json"
+}

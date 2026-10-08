@@ -8,7 +8,18 @@ import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 
 export class AuthAccessTokenSchema extends BaseModel {
-  static $columns = ['abilities', 'createdAt', 'expiresAt', 'hash', 'id', 'lastUsedAt', 'name', 'tokenableId', 'type', 'updatedAt'] as const
+  static $columns = [
+    'abilities',
+    'createdAt',
+    'expiresAt',
+    'hash',
+    'id',
+    'lastUsedAt',
+    'name',
+    'tokenableId',
+    'type',
+    'updatedAt',
+  ] as const
   $columns = AuthAccessTokenSchema.$columns
   @column()
   declare abilities: string
@@ -33,7 +44,20 @@ export class AuthAccessTokenSchema extends BaseModel {
 }
 
 export class FhirResourceMetadatumSchema extends BaseModel {
-  static $columns = ['createdAt', 'id', 'indexedAt', 'institutionId', 'patientId', 'resourceId', 'resourceType', 'status', 'updatedAt', 'versionId'] as const
+  static $columns = [
+    'createdAt',
+    'id',
+    'indexedAt',
+    'institutionId',
+    'patientId',
+    'resourceId',
+    'resourceType',
+    'resourceName',
+    'status',
+    'versionId',
+    'classification',
+    'cid',
+  ] as const
   $columns = FhirResourceMetadatumSchema.$columns
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime | null
@@ -55,49 +79,6 @@ export class FhirResourceMetadatumSchema extends BaseModel {
   declare updatedAt: DateTime | null
   @column()
   declare versionId: string | null
-}
-
-export class InstitutionSchema extends BaseModel {
-  static $columns = ['createdAt', 'id', 'name', 'updatedAt'] as const
-  $columns = InstitutionSchema.$columns
-  @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime | null
-  @column({ isPrimary: true })
-  declare id: string
-  @column()
-  declare name: string
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updatedAt: DateTime | null
-}
-
-export class PatientIdentifierSchema extends BaseModel {
-  static $columns = ['createdAt', 'id', 'institutionId', 'patientId', 'system', 'updatedAt', 'value'] as const
-  $columns = PatientIdentifierSchema.$columns
-  @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime | null
-  @column({ isPrimary: true })
-  declare id: string
-  @column()
-  declare institutionId: string | null
-  @column()
-  declare patientId: string | null
-  @column()
-  declare system: string
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updatedAt: DateTime | null
-  @column()
-  declare value: string
-}
-
-export class PatientSchema extends BaseModel {
-  static $columns = ['createdAt', 'id', 'updatedAt'] as const
-  $columns = PatientSchema.$columns
-  @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime | null
-  @column({ isPrimary: true })
-  declare id: string
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updatedAt: DateTime | null
 }
 
 export class UserSchema extends BaseModel {

@@ -1,11 +1,13 @@
 import emitter from '@adonisjs/core/services/emitter'
 
 // Events
-import FhirMetadataSaved from '#events/healthcare/fhir_metadata_saved'
-import FhirMetadataDeleted from '#events/healthcare/fhir_metadata_deleted'
+import FhirMetadataSaved from '#events/fhir_metadata_saved'
+import FhirMetadataDeleted from '#events/fhir_metadata_deleted'
+import ClinicalAccessEvent from '#events/clinical_access_event'
 
 // Listeners
-import FhirMetadataIndexer from '#listeners/healthcare/fhir_metadata_indexer'
+const FhirMetadataIndexer = () => import('#listeners/fhir_metadata_indexer')
+const ClinicalAuditLogger = () => import('#listeners/clinical_audit_logger')
 
 /*
 |--------------------------------------------------------------------------
@@ -17,5 +19,9 @@ import FhirMetadataIndexer from '#listeners/healthcare/fhir_metadata_indexer'
 |
 */
 
+// Metadados FHIR
 emitter.on(FhirMetadataSaved, [FhirMetadataIndexer, 'handleSaved'])
 emitter.on(FhirMetadataDeleted, [FhirMetadataIndexer, 'handleDeleted'])
+
+// Auditoria Clínica e Interoperabilidade (Blockchain Fabric)
+emitter.on(ClinicalAccessEvent, [ClinicalAuditLogger, 'handle'])

@@ -1,49 +1,44 @@
 import { Context, Contract, Info, Transaction, Returns } from 'fabric-contract-api'
+import { FhirMetadataRepository } from './repositories/FhirMetadataRepository'
+import { CreateFhirMetadataDto, FhirMetadataOutputDto } from './dtos/fhir_metadata_dtos'
 
 @Info({ title: 'FhirChaincode', description: 'Smart Contract para Metadados FHIR' })
 export class FhirChaincode extends Contract {
+  /**
+   * Persiste metadados FHIR no ledger.
+   * @param payloadJson - JSON serializado de CreateFhirMetadataDto
+   */
   @Transaction()
-  public async CreateMetadata(ctx: Context, metadataJson: string): Promise<void> {
-    const metadata = JSON.parse(metadataJson)
-    const key = metadata.resourceId
-
-    if (!key) {
-      throw new Error('O metadado precisa conter um resourceId')
-    }
-
-    await ctx.stub.putState(key, Buffer.from(metadataJson))
+  public async CreateMetadata(ctx: Context, payloadJson: string): Promise<void> {
+    const dto: CreateFhirMetadataDto = JSON.parse(payloadJson)
+    const repo = new FhirMetadataRepository(ctx)
+    await repo.save(dto)
   }
 
+  /**
+   * Busca um metadado FHIR pelo resourceId.
+   * @returns JSON serializado de FhirMetadataOutputDto
+   */
   @Transaction(false)
   @Returns('string')
   public async ReadMetadata(ctx: Context, id: string): Promise<string> {
-    const metadataBytes = await ctx.stub.getState(id)
-
-    if (!metadataBytes || metadataBytes.length === 0) {
+    const repo = new FhirMetadataRepository(ctx)
+    const dto = await repo.findById(id)
+    if (!dto) {
       throw new Error(`O metadado com ID ${id} não foi encontrado`)
     }
-
-    // Converte Uint8Array em Buffer antes de transformar em string UTF-8
-    return Buffer.from(metadataBytes).toString('utf8')
+    return JSON.stringify(dto)
   }
 
+  /**
+   * Lista todos os metadados FHIR registrados no ledger.
+   * @returns JSON serializado de FhirMetadataOutputDto[]
+   */
   @Transaction(false)
   @Returns('string')
   public async GetAllMetadata(ctx: Context): Promise<string> {
-    const iterator = await ctx.stub.getStateByRange('', '')
-    const results = []
-
-    let result = await iterator.next()
-    while (!result.done) {
-      if (result.value && result.value.value) {
-        // Converte Uint8Array em Buffer antes de transformar em string UTF-8
-        const jsonString = Buffer.from(result.value.value).toString('utf8')
-        results.push(JSON.parse(jsonString))
-      }
-      result = await iterator.next()
-    }
-    await iterator.close()
-
+    const repo = new FhirMetadataRepository(ctx)
+    const results: FhirMetadataOutputDto[] = await repo.findAll()
     return JSON.stringify(results)
   }
 }
